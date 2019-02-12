@@ -5,8 +5,9 @@ import (
 	"log"
 	"time"
 
+	img "github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/veandco/go-sdl2/ttf"
+	ttf "github.com/veandco/go-sdl2/ttf"
 )
 
 func main() {
@@ -28,7 +29,7 @@ func run() error {
 	}
 	defer ttf.Quit()
 
-	w, r, err := sdl.CreateWindowAndRenderer(800, 600, sdl.WINDOW_SHOWN)
+	w, r, err := sdl.CreateWindowAndRenderer(1200, 800, sdl.WINDOW_SHOWN)
 	if err != nil {
 		return fmt.Errorf("could not create window: %v", err)
 	}
@@ -37,9 +38,32 @@ func run() error {
 	if err := drawTitle(r); err != nil {
 		return fmt.Errorf("could not draw title: %v", err)
 	}
-
 	time.Sleep(3 * time.Second)
 
+	if err := drawBackground(r); err != nil {
+		return fmt.Errorf("could not draw background: %v", err)
+	}
+	time.Sleep(3 * time.Second)
+
+	return nil
+}
+
+func drawBackground(r *sdl.Renderer) error {
+	r.Clear()
+
+	t, err := img.LoadTexture(r, "res/imgs/background.png")
+	if err != nil {
+		return fmt.Errorf("could not load background: %v", err)
+	}
+	defer t.Destroy()
+
+	if err := r.Copy(t, nil, nil); err != nil {
+		return fmt.Errorf("could not copy background: %v", err)
+	}
+
+	// _ = t
+
+	r.Present()
 	return nil
 }
 
